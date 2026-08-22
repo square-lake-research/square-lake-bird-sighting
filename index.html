@@ -135,7 +135,9 @@
   .empty{border:1px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;color:var(--ink);opacity:.7;}
   .empty b{opacity:1;}
 
-  footer{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;opacity:.45;padding:28px 0 0;}
+  footer{text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--cypress);opacity:.85;padding:28px 0 0;}
+  .disclaimer{max-width:560px;margin:10px auto 0;text-align:center;font-family:'Inter',sans-serif;
+    font-style:italic;font-size:12.5px;font-weight:500;line-height:1.6;color:var(--ink);opacity:.75;padding:0 20px 28px;}
 
   @media(max-width:560px){
     .stat-row{grid-template-columns:repeat(3,1fr);}
@@ -225,6 +227,7 @@
   </section>
 
   <footer>Square Lake &middot; Laureate Park &middot; Lake Nona, FL</footer>
+  <p class="disclaimer" id="disclaimer"></p>
 </div>
 
 <script>
@@ -400,7 +403,9 @@ const seedEntries = [
   { id: "2026-01-15-american-white-pelican-2", date:"2026-01-15", bird:"American White Pelican", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/American_white_pelican,_Brunswick,_GA,_US.jpg", note:"Logged as \"American Pelican\" (originally \"Brown Pelican\" in import)" },
   { id: "2026-03-08-sandhill-crane", date:"2026-03-08", bird:"Sandhill Crane", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Florida_sandhill_crane_1.jpg", note:"" },
   { id: "2026-05-21-white-ibis", date:"2026-05-21", bird:"White Ibis", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/White_Ibis_(Eudocimus_albus)_RWD2.jpg", note:"" },
-  { id: "2026-07-14-little-blue-heron", date:"2026-07-14", bird:"Little Blue Heron", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Shark_Valley..bird_Paradise_W_of_Miami...Little_Blue_Heron_(Egretta_caerulea)..._(26361973803).jpg", note:"" }
+  { id: "2026-07-14-little-blue-heron", date:"2026-07-14", bird:"Little Blue Heron", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Shark_Valley..bird_Paradise_W_of_Miami...Little_Blue_Heron_(Egretta_caerulea)..._(26361973803).jpg", note:"" },
+  { id: "2026-08-22-anhinga", date:"2026-08-22", bird:"Anhinga", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Anhinga_at_Merritt_Island_National_Wildlife_Refuge.jpg", note:"" },
+  { id: "2026-08-22-great-egret", date:"2026-08-22", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" }
 ];
 
 const SEASON_ICONS = {
@@ -440,14 +445,19 @@ function render(){
   document.getElementById('stat-species').textContent = species;
 
   // sighting range: earliest -> latest (allEntries sorted descending by date), raw YYYY-MM-DD
+  const disclaimerEl = document.getElementById('disclaimer');
   if(allEntries.length){
     const latestDate = allEntries[0].date;
     const earliestDate = allEntries[allEntries.length-1].date;
     document.getElementById('range-first').textContent = earliestDate;
     document.getElementById('range-last').textContent = latestDate;
+
+    const dayCount = Math.round((new Date(latestDate) - new Date(earliestDate)) / 86400000);
+    disclaimerEl.textContent = `These sightings reflect the personal observations of one birdwatching family living on the shore of Square Lake, recorded over the past ${dayCount} days. Patterns in bird appearances and seasonal trends are shaped by chance encounters and the family's travel schedule — they do not necessarily reflect the birds' natural behavior or migratory habits.`;
   } else {
     document.getElementById('range-first').textContent = "—";
     document.getElementById('range-last').textContent = "";
+    disclaimerEl.textContent = '';
   }
 
   // busiest single date
