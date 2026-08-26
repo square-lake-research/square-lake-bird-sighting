@@ -105,11 +105,17 @@
   .view-btn{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;background:transparent;border:1px solid var(--line);color:var(--ink);opacity:.6;padding:5px 10px;border-radius:999px;cursor:pointer;}
   .view-btn.active{background:var(--cypress);border-color:var(--cypress);color:#fff;opacity:1;}
 
-  .species-group{background:var(--egret);border:1px solid var(--line);border-radius:14px;padding:0;overflow:hidden;}
+  .species-group{background:var(--egret);border:1px solid var(--line);border-radius:14px;padding:0;}
   .species-summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:56px 1fr auto auto;gap:14px;align-items:center;padding:12px 14px;}
   .species-summary::-webkit-details-marker{display:none;}
   .species-summary .sp-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;object-position:center top;background:var(--lake-blue-light);}
   .species-summary .sp-thumb.placeholder{display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--cypress);opacity:.5;text-align:center;}
+  .sp-thumb-wrap{position:relative;display:inline-block;}
+  .sp-info-tooltip{position:absolute;top:0;left:64px;width:230px;max-width:60vw;background:var(--cypress);
+    color:#F6F3EA;font-family:'Inter',sans-serif;font-size:11.5px;line-height:1.55;padding:10px 12px;
+    border-radius:10px;opacity:0;pointer-events:none;transition:opacity .15s ease;z-index:30;
+    box-shadow:0 8px 20px rgba(0,0,0,0.28);}
+  .sp-thumb-wrap:hover .sp-info-tooltip{opacity:1;}
   .species-summary .sp-name{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;}
   .species-summary .sp-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cypress);border:1px solid var(--marsh-gold);border-radius:999px;padding:3px 9px;white-space:nowrap;}
   .species-summary .sp-caret{font-size:11px;opacity:.4;transition:transform .15s ease;}
@@ -487,8 +493,32 @@ const seedEntries = [
   { id: "2026-08-26-great-blue-heron", date:"2026-08-26", bird:"Great Blue Heron", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Blue_Heron_Wading_2.jpg", note:"" },
   { id: "2026-08-26-snowy-egret", date:"2026-08-26", bird:"Snowy Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Snowy_egret_-_Garzetta_nivea_(Egretta_thula).jpg", note:"" },
   { id: "2026-08-26-great-egret", date:"2026-08-26", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
-  { id: "2026-08-26-roseate-spoonbill", date:"2026-08-26", bird:"Roseate Spoonbill", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Roseate_Spoonbill_-_Myakka_River_State_Park.jpg", note:"" }
+  { id: "2026-08-26-roseate-spoonbill", date:"2026-08-26", bird:"Roseate Spoonbill", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Roseate_Spoonbill_-_Myakka_River_State_Park.jpg", note:"" },
+  { id: "2026-08-26-limpkin", date:"2026-08-26", bird:"Limpkin", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Limpkin_RWD1.jpg", note:"" }
 ];
+
+const BIRD_INFO = {
+  "Great Egret": "A tall, all-white wading bird with a slender yellow bill and long black legs. Once hunted nearly to extinction for its plumes, it's now a common and elegant sight at Florida lakes and marshes.",
+  "Great Blue Heron": "North America's largest heron, standing up to 4.5 feet tall with slate-blue plumage and a patient, statuesque hunting style along the shoreline.",
+  "Anhinga": "Often called the \"snake bird\" for the way it swims with only its long neck above water. It lacks waterproof feathers, so it's frequently seen perched with wings spread wide to dry.",
+  "Wood Stork": "A large, bald-headed wading bird and the only stork native to North America. It's a federally protected species that forages by feel, sweeping its bill through shallow water to detect prey.",
+  "Roseate Spoonbill": "Unmistakable for its bright pink plumage and flat, spoon-shaped bill, which it swings side to side through water to filter out small fish and crustaceans.",
+  "Snowy Egret": "A smaller, dazzling white egret with a black bill, black legs, and bright yellow feet — sometimes called \"golden slippers.\" Known for an active, stir-and-chase feeding style.",
+  "Little Blue Heron": "A small heron that's slate-blue as an adult but pure white as a juvenile, leading to frequent misidentification. It often forages alongside egrets to snag prey stirred up by them.",
+  "White Ibis": "A medium-sized wading bird with white plumage, a long down-curved red-orange bill, and matching legs. Common in groups probing the mud for crayfish and insects.",
+  "American White Pelican": "One of the largest North American birds by wingspan, with brilliant white plumage and a massive orange bill. Unlike Brown Pelicans, it feeds by scooping from the water's surface rather than diving.",
+  "Turkey Vulture": "A large soaring scavenger with a featherless red head and a habit of tilting side-to-side in flight. It has an unusually strong sense of smell, rare among birds, to locate carrion.",
+  "Black Vulture": "A stocky black scavenger with a bare gray-black head, often seen soaring in tight circles alongside Turkey Vultures, though it relies on sight rather than smell to find food.",
+  "Osprey": "A fish-eating raptor with a white belly and a dark eye stripe, known for hovering over water before plunging feet-first to snatch fish with reversible outer toes.",
+  "Bald Eagle": "The iconic white-headed raptor of North America. Juveniles are mottled brown and don't gain the signature white head and tail until around 4–5 years old.",
+  "Sandhill Crane": "A tall, gray, long-necked crane with a distinctive red crown patch. Central Florida hosts a year-round resident population, recognizable by their loud, rolling bugle calls.",
+  "Double-crested Cormorant": "A dark waterbird with a hooked bill and bright orange-yellow throat patch, frequently seen perched with wings outstretched to dry after diving for fish.",
+  "Glossy Ibis": "A wading bird with dark, iridescent chestnut-and-green plumage that shimmers in good light, and a long down-curved bill used to probe soft mud for food.",
+  "Limpkin": "A brown, heavily white-speckled wading bird closely tied to apple snails, its primary food source. Named for its odd, limping gait and famous for an eerie, wailing call.",
+  "Tricolored Heron": "A slender heron with slate-blue, purple, and white plumage and a distinctive white belly stripe, often seen actively wading and dashing after fish in shallow water.",
+  "Mottled Duck": "A dabbling duck resembling a female Mallard, with mottled brown plumage. It's a year-round Florida resident rather than a migratory visitor, and doesn't have the white tail feathers Mallards show.",
+  "Red-shouldered Hawk": "A vocal, medium-sized hawk with reddish shoulders and barred underparts, often heard before it's seen thanks to its sharp, repeated \"kee-yer\" call."
+};
 
 const SEASON_ICONS = {
   Winter: '<svg viewBox="0 0 24 24" fill="none" stroke="#5F8FA6" stroke-width="1.8"><path d="M12 2v20M4 7l16 10M20 7L4 17" stroke-linecap="round"/></svg>',
@@ -662,9 +692,14 @@ function render(){
   logEl.innerHTML = sortedBirds.map(bird=>{
     const entries = groups[bird];
     const withImg = entries.find(e=>e.imageUrl);
-    const thumb = withImg
+    const thumbInner = withImg
       ? `<img class="sp-thumb" src="${withImg.imageUrl}" alt="${bird}" onerror="this.outerHTML='<div class=&quot;sp-thumb placeholder&quot;>No photo</div>'">`
       : `<div class="sp-thumb placeholder">No photo</div>`;
+    const info = BIRD_INFO[bird];
+    const thumb = `<span class="sp-thumb-wrap">
+        ${thumbInner}
+        ${info ? `<span class="sp-info-tooltip">${info}</span>` : ''}
+      </span>`;
     const rows = entries.map(e=>`
       <div class="species-detail-row">
         <span class="sd-date">${e.date}</span>
