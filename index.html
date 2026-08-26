@@ -27,7 +27,7 @@
   .wrap{max-width:920px;margin:0 auto;padding:0 0 64px;}
 
   /* ---------- HERO / LAKE BANNER ---------- */
-  .hero{position:relative;height:340px;overflow:hidden;border-radius:0 0 18px 18px;background:var(--cypress);}
+  .hero{position:relative;aspect-ratio:920/340;width:100%;overflow:hidden;border-radius:0 0 18px 18px;background:var(--cypress);}
   .hero-copy{position:absolute;left:0;right:0;bottom:28px;text-align:center;color:#fff;z-index:5;text-shadow:0 2px 10px rgba(0,0,0,0.35);}
   .lake-label{position:absolute;left:80%;top:64%;transform:translate(-50%,-50%);z-index:6;
     display:flex;align-items:center;gap:5px;background:rgba(15,28,24,0.72);color:#F6F3EA;
@@ -64,7 +64,7 @@
   .pill-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cypress);border:1px solid var(--marsh-gold);border-radius:999px;padding:1px 8px;margin-top:3px;display:inline-block;}
 
   .chart-card{background:var(--egret);border:1px solid var(--line);border-radius:14px;padding:20px 20px 12px;margin-bottom:18px;}
-  .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
   .chart-card h3{font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin:0;}
   .bars{display:flex;align-items:flex-end;gap:6px;height:120px;}
   .bar-col{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
@@ -99,7 +99,7 @@
   /* ---------- LOG CARDS ---------- */
 
   .log-list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-items:start;}
-  .log-list.view-table{display:block;}
+  .log-list.view-table{display:block;overflow-x:auto;}
 
   .view-toggle{display:flex;gap:6px;margin-left:auto;}
   .view-btn{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;background:transparent;border:1px solid var(--line);color:var(--ink);opacity:.6;padding:5px 10px;border-radius:999px;cursor:pointer;}
@@ -143,6 +143,11 @@
   .disclaimer{max-width:800px;margin:10px auto 0;text-align:center;font-family:'Inter',sans-serif;
     font-style:italic;font-size:12.5px;font-weight:500;line-height:1.6;color:var(--ink);opacity:.75;padding:0 20px 28px;}
 
+  @media(max-width:700px){
+    section{padding:28px 18px 0;}
+    .chart-card{padding:16px 14px 10px;}
+  }
+
   @media(max-width:560px){
     .stat-row{grid-template-columns:repeat(3,1fr);}
     .season-row{grid-template-columns:repeat(2,1fr);}
@@ -150,6 +155,26 @@
     .thumb{width:64px;height:64px;}
     .stamp{grid-column:1/-1;justify-self:start;}
     .log-list{grid-template-columns:1fr;}
+  }
+
+  @media(max-width:420px){
+    section{padding:22px 14px 0;}
+    .stat-row{grid-template-columns:repeat(2,1fr);gap:8px;}
+    .stat{height:104px;padding:10px 8px;}
+    .stat .n{font-size:22px;}
+    .range-date{font-size:12px;}
+    .busiest-date{font-size:13px;}
+    .season-row{grid-template-columns:repeat(2,1fr);gap:8px;}
+    .chart-card{padding:14px 10px 8px;}
+    .bars{gap:3px;}
+    .bar-col .lbl{font-size:9px;}
+    .bar-col .cnt{font-size:9px;}
+    .species-summary{grid-template-columns:44px 1fr auto;gap:8px;padding:10px;}
+    .species-summary .sp-caret{display:none;}
+    .sp-thumb{width:44px;height:44px;}
+    .hero-info-overlay{padding:18px 16px;}
+    .hero-info-overlay p{font-size:11.5px;}
+    .hero-info-stats{font-size:10px;gap:4px 10px;}
   }
 
   .fb-share-btn{position:absolute;top:14px;left:14px;z-index:10;width:34px;height:34px;
@@ -454,7 +479,15 @@ const seedEntries = [
   { id: "2026-08-22-great-egret", date:"2026-08-22", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
   { id: "2026-08-23-anhinga", date:"2026-08-23", bird:"Anhinga", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Anhinga_at_Merritt_Island_National_Wildlife_Refuge.jpg", note:"" },
   { id: "2026-08-23-great-egret", date:"2026-08-23", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
-  { id: "2026-08-24-great-egret", date:"2026-08-24", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" }
+  { id: "2026-08-24-great-egret", date:"2026-08-24", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
+  { id: "2026-08-24-anhinga", date:"2026-08-24", bird:"Anhinga", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Anhinga_at_Merritt_Island_National_Wildlife_Refuge.jpg", note:"" },
+  { id: "2026-08-24-snowy-egret", date:"2026-08-24", bird:"Snowy Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Snowy_egret_-_Garzetta_nivea_(Egretta_thula).jpg", note:"" },
+  { id: "2026-08-25-great-egret", date:"2026-08-25", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
+  { id: "2026-08-25-anhinga", date:"2026-08-25", bird:"Anhinga", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Anhinga_at_Merritt_Island_National_Wildlife_Refuge.jpg", note:"" },
+  { id: "2026-08-26-great-blue-heron", date:"2026-08-26", bird:"Great Blue Heron", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Blue_Heron_Wading_2.jpg", note:"" },
+  { id: "2026-08-26-snowy-egret", date:"2026-08-26", bird:"Snowy Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Snowy_egret_-_Garzetta_nivea_(Egretta_thula).jpg", note:"" },
+  { id: "2026-08-26-great-egret", date:"2026-08-26", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
+  { id: "2026-08-26-roseate-spoonbill", date:"2026-08-26", bird:"Roseate Spoonbill", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Roseate_Spoonbill_-_Myakka_River_State_Park.jpg", note:"" }
 ];
 
 const SEASON_ICONS = {
