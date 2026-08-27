@@ -164,21 +164,6 @@
     .log-list{grid-template-columns:1fr;}
   }
 
-  @media(max-width:700px){
-    .hero-info-overlay{
-      position:fixed;
-      inset:auto;
-      top:50%;
-      left:50%;
-      transform:translate(-50%,-50%);
-      width:88vw;
-      max-width:420px;
-      max-height:75vh;
-      border-radius:16px;
-      box-shadow:0 16px 40px rgba(0,0,0,0.45);
-    }
-  }
-
   @media(max-width:420px){
     section{padding:22px 14px 0;}
     .stat-row{grid-template-columns:repeat(2,1fr);gap:8px;}
@@ -211,10 +196,15 @@
     color:#fff;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.03em;
     padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .2s ease;}
   .hero:hover .hero-info-hint{opacity:0;}
-  .hero-info-overlay{position:absolute;inset:0;z-index:8;background:rgba(15,28,24,0.90);
+  .hero-info-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:90vw;max-width:460px;max-height:75vh;z-index:50;background:rgba(15,28,24,0.94);
     color:#F6F3EA;padding:26px 30px;display:flex;flex-direction:column;align-items:center;
     justify-content:center;text-align:center;opacity:0;pointer-events:none;overflow-y:auto;
+    border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,0.45);
     transition:opacity .25s ease;}
+  .hero-info-backdrop{position:fixed;inset:0;z-index:49;background:rgba(10,18,15,0.55);
+    opacity:0;pointer-events:none;transition:opacity .25s ease;}
+  .hero:hover .hero-info-backdrop{opacity:1;}
   .hero:hover .hero-info-overlay{opacity:1;}
   .hero-info-overlay h4{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin:0 0 10px;color:#fff;}
   .hero-info-overlay p{font-family:'Inter',sans-serif;font-size:12.5px;line-height:1.6;margin:0 0 10px;
@@ -239,6 +229,7 @@
       <span class="fb-icon">f</span>
     </a>
     <div class="hero-info-hint">ⓘ hover for lake info</div>
+    <div class="hero-info-backdrop"></div>
     <div class="hero-info-overlay">
       <h4>About Square Lake</h4>
       <p>Square Lake takes its name from the distinctly rectangular shape visible in aerial views. It's bordered by Tavistock Lakes Blvd, Granger Ave, Briand Ave, and a pedestrian walkway that circles its shore.</p>
