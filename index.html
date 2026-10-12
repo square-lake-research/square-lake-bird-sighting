@@ -127,6 +127,10 @@
   .species-detail-row .sd-date{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--cypress);min-width:82px;}
   .species-detail-row .sd-season{font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.55;}
   .species-detail-row .sd-note{font-size:12px;opacity:.7;flex:1;}
+  .species-detail-row .sd-month{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--cypress);min-width:72px;white-space:nowrap;}
+  .species-detail-row .sd-days{display:flex;flex-wrap:wrap;gap:4px;flex:1;}
+  .species-detail-row .sd-day{font-family:'JetBrains Mono',monospace;font-size:11px;min-width:24px;text-align:center;padding:2px 5px;border-radius:6px;background:rgba(31,61,52,0.07);color:var(--ink);}
+  .species-detail-row .sd-mcount{font-family:'JetBrains Mono',monospace;font-size:10.5px;opacity:.5;min-width:16px;text-align:right;}
 
   .log-table{width:100%;border-collapse:collapse;background:var(--egret);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
   .log-table th,.log-table td{text-align:left;padding:9px 12px;font-size:12.5px;border-bottom:1px solid var(--line);}
@@ -675,9 +679,12 @@ const seedEntries = [
   { id: "2026-09-27-mottled-duck", date:"2026-09-27", bird:"Mottled Duck", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Mottled_Duck_female_RWD2.jpg", note:"" },
   { id: "2026-10-09-great-egret", date:"2026-10-09", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
   { id: "2026-10-09-anhinga", date:"2026-10-09", bird:"Anhinga", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Anhinga_at_Merritt_Island_National_Wildlife_Refuge.jpg", note:"" },
+  { id: "2026-10-09-osprey", date:"2026-10-09", bird:"Osprey", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/OspreyNASA.jpg", note:"" },
   { id: "2026-10-10-anhinga", date:"2026-10-10", bird:"Anhinga", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Anhinga_at_Merritt_Island_National_Wildlife_Refuge.jpg", note:"" },
   { id: "2026-10-10-great-egret", date:"2026-10-10", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
-  { id: "2026-10-11-great-egret", date:"2026-10-11", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" }
+  { id: "2026-10-11-great-egret", date:"2026-10-11", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
+  { id: "2026-10-12-great-egret", date:"2026-10-12", bird:"Great Egret", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Great_Egret.jpg", note:"" },
+  { id: "2026-10-12-little-blue-heron", date:"2026-10-12", bird:"Little Blue Heron", imageUrl:"https://commons.wikimedia.org/wiki/Special:FilePath/Shark_Valley..bird_Paradise_W_of_Miami...Little_Blue_Heron_(Egretta_caerulea)..._(26361973803).jpg", note:"" }
 ];
 
 const BIRD_INFO = {
@@ -887,12 +894,24 @@ function render(){
         ${thumbInner}
         ${info ? `<span class="sp-info-tooltip">${info}</span>` : ''}
       </span>`;
-    const rows = entries.map(e=>`
+    // group this species' sightings by month: one row per month, days listed inline
+    const byMonth = {};
+    entries.forEach(e=>{
+      const ym = e.date.slice(0,7);
+      (byMonth[ym] = byMonth[ym] || []).push(e);
+    });
+    const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const rows = Object.keys(byMonth).sort().reverse().map(ym=>{
+      const list = byMonth[ym].slice().sort((a,b)=> a.date.localeCompare(b.date));
+      const [y,m] = ym.split('-');
+      const days = list.map(e=>`<span class="sd-day"${e.note ? ` title="${String(e.note).replace(/"/g,'&quot;')}"` : ''}>${parseInt(e.date.slice(8,10),10)}</span>`).join('');
+      return `
       <div class="species-detail-row">
-        <span class="sd-date">${e.date}</span>
-        <span class="sd-season">${seasonOf(e.date)}</span>
-        ${e.note ? `<span class="sd-note">${e.note}</span>` : ''}
-      </div>`).join('');
+        <span class="sd-month">${MON[parseInt(m,10)-1]} ${y}</span>
+        <span class="sd-days">${days}</span>
+        <span class="sd-mcount">${list.length}</span>
+      </div>`;
+    }).join('');
     return `<details class="species-group">
       <summary class="species-summary">
         ${thumb}
