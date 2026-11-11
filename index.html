@@ -75,12 +75,15 @@
   .bar-col .lbl{font-size:10px;margin-top:6px;opacity:.6;font-family:'JetBrains Mono',monospace;}
 
   .bar-tooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%) translateY(8px);
-    display:flex;gap:6px;background:var(--cypress);border-radius:10px;padding:8px;margin-bottom:8px;
+    display:flex;flex-wrap:nowrap;justify-content:center;gap:6px;background:var(--cypress);border-radius:10px;padding:8px;margin-bottom:8px;
+    width:max-content;
     opacity:0;pointer-events:none;transition:opacity .18s ease, transform .18s ease;z-index:20;
-    box-shadow:0 10px 24px rgba(0,0,0,0.28);white-space:nowrap;}
+    box-shadow:0 10px 24px rgba(0,0,0,0.28);}
   .bar-col.has-data:hover .bar-tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
-  .bar-tooltip .tt-item{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .bar-tooltip.wrap{flex-wrap:wrap;gap:8px 6px;max-width:calc(100vw - 16px);}
+  .bar-tooltip .tt-item{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;width:52px;}
   .bar-tooltip img{width:46px;height:46px;border-radius:7px;object-fit:cover;object-position:center top;display:block;}
+  .bar-tooltip .tt-count{position:absolute;top:-5px;right:0;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--marsh-gold);color:var(--cypress);font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.35);}
   .bar-tooltip .tt-name{color:#fff;font-size:9px;font-family:'JetBrains Mono',monospace;max-width:52px;white-space:normal;text-align:center;line-height:1.2;}
 
   .season-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px;}
@@ -1001,14 +1004,23 @@ function render(){
   const max = Math.max(1, ...counts);
   const barsEl = document.getElementById('month-bars');
   barsEl.innerHTML = counts.map((c,i)=>{
+    const bySpecies = {};
+    bucketBirds[i].forEach(e=>{
+      const k = e.bird.trim();
+      if(!bySpecies[k]) bySpecies[k] = {bird:k, imageUrl:e.imageUrl, n:0};
+      bySpecies[k].n++;
+      if(!bySpecies[k].imageUrl && e.imageUrl) bySpecies[k].imageUrl = e.imageUrl;
+    });
+    const speciesList = Object.values(bySpecies).sort((x,y)=> y.n-x.n || x.bird.localeCompare(y.bird));
     const tooltip = c>0 ? `
       <div class="bar-tooltip">
-        ${bucketBirds[i].map(e=>`
-          <div class="tt-item">
-            ${e.imageUrl
-              ? `<img src="${e.imageUrl}" alt="${e.bird}" onerror="this.style.display='none'">`
+        ${speciesList.map(sp=>`
+          <div class="tt-item" title="${sp.bird}: ${sp.n} sighting${sp.n>1?'s':''}">
+            ${sp.imageUrl
+              ? `<img src="${sp.imageUrl}" alt="${sp.bird}" onerror="this.style.display='none'">`
               : ``}
-            <div class="tt-name">${e.bird}</div>
+            <span class="tt-count">${sp.n}</span>
+            <div class="tt-name">${sp.bird}</div>
           </div>`).join('')}
       </div>` : '';
     return `
@@ -1019,6 +1031,22 @@ function render(){
       <div class="lbl">${bucketLabels[i]}</div>
     </div>`;
   }).join('');
+  // keep each hover popup fully on screen (one row can be wide)
+  barsEl.querySelectorAll('.bar-col.has-data').forEach(col=>{
+    const tt = col.querySelector('.bar-tooltip');
+    if(!tt) return;
+    col.addEventListener('mouseenter', ()=>{
+      tt.style.left = '50%';
+      tt.classList.remove('wrap');
+      const pad = 8, vw = document.documentElement.clientWidth;
+      if(tt.getBoundingClientRect().width > vw - 2*pad) tt.classList.add('wrap');  // too many for one row on this screen
+      const r = tt.getBoundingClientRect();
+      let shift = 0;
+      if(r.left < pad) shift = pad - r.left;
+      else if(r.right > vw - pad) shift = (vw - pad) - r.right;
+      if(shift) tt.style.left = `calc(50% + ${Math.round(shift)}px)`;
+    });
+  });
 
   // seasons
   const seasonCounts = {Winter:0,Spring:0,Summer:0,Fall:0};
